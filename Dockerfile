@@ -1,6 +1,6 @@
 FROM node:20-alpine
 
-WORKDIR /convex
+WORKDIR /
 
 # Copy main package files and install dependencies
 COPY package.json package-lock.json ./
