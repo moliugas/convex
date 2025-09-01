@@ -1,5 +1,7 @@
 FROM node:20-alpine
 
+ARG CACHEBUST=1
+
 WORKDIR /app
 
 # Copy package files and install dependencies
