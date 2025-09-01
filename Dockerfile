@@ -6,10 +6,6 @@ WORKDIR /convex
 COPY package.json package-lock.json ./
 RUN npm ci --omit=dev
 
-# If you have a separate convex folder with its own package.json, copy and install it
-COPY convex/package.json convex/package-lock.json ./convex/
-RUN cd convex && npm ci --omit=dev
-
 # Copy all source files
 COPY . .
 
