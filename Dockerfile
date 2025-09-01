@@ -4,7 +4,7 @@ WORKDIR /
 
 # Copy main package files and install dependencies
 COPY package.json package-lock.json ./
-RUN npm ci --omit=dev
+RUN npm install --omit=dev
 
 # Copy all source files
 COPY . .
