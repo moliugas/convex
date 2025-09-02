@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "convex dev --prod --listen 0.0.0.0:3000"
+    "start": "convex dev --prod --listen 0.0.0.0:$PORT"
   },
   "dependencies": {
     "convex": "^1.0.0"

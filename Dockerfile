@@ -1,21 +1,21 @@
 FROM node:20-alpine
 
-ARG CACHEBUST=1
+WORKDIR /convex
 
-WORKDIR /app
-
-# Copy package files and install dependencies
+# Copy package files and install production dependencies
 COPY package.json package-lock.json ./
 RUN npm install --omit=dev
 
-# Copy all source files
+# Copy application source
 COPY . .
 
-# Install Convex CLI globally (optional — better to have in package.json)
-RUN npm install -g convex
-
-# Expose port for Dokku
+# Environment
+ENV NODE_ENV=production
+# Default; Dokku sets $PORT at runtime
 ENV PORT=3210
 
-EXPOSE ${PORT}
-EXPOSE 3211
+# Expose default port (informational)
+EXPOSE 3210
+
+# Start the server using the project script
+CMD ["npm", "run", "start"]
