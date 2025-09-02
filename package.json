@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Convex backend project",
   "scripts": {
-    "dev": "convex dev",
+    "dev": "npm install convex@latest",
     "deploy": "convex deploy"
   },
   "dependencies": {
