@@ -1,15 +1,12 @@
 {
-  "name": "my-convex-app",
+  "name": "convex-self-hosted",
   "version": "1.0.0",
-  "description": "Convex backend project",
+  "private": true,
   "scripts": {
-    "dev": "npm install convex@latest",
-    "deploy": "convex deploy"
+    "start": "convex dev --prod --port ${PORT:-3210}",
+    "dev": "convex dev"
   },
   "dependencies": {
-    "convex": "^1.16.0"
-  },
-  "devDependencies": {
-    "convex-dev": "^1.16.0"
+    "convex": "^1.12.0"
   }
 }
