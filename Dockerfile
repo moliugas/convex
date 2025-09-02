@@ -19,6 +19,3 @@ ENV PORT=3210
 
 EXPOSE ${PORT}
 EXPOSE 3211
-
-# Start Convex in production mode
-CMD ["convex", "dev", "--prod", "--listen", "0.0.0.0:${PORT}"]
