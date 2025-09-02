@@ -2,9 +2,6 @@
   "name": "convex-self-hosted",
   "version": "1.0.0",
   "private": true,
-  "scripts": {
-    "start": "npx convex dev -y"
-  },
   "dependencies": {
     "convex": "^1.12.0"
   }
