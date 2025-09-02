@@ -15,7 +15,10 @@ COPY . .
 RUN npm install -g convex
 
 # Expose port for Dokku
-EXPOSE 3000
+ENV PORT=3210
+
+EXPOSE ${PORT}
+EXPOSE 3211
 
 # Start Convex in production mode
-CMD ["convex", "dev", "--prod", "--listen", "0.0.0.0:3000"]
+CMD ["convex", "dev", "--prod", "--listen", "0.0.0.0:${PORT}"]
