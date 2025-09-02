@@ -1,6 +1,6 @@
 FROM node:20-alpine
 
-WORKDIR /convex
+WORKDIR /
 
 # Copy package files and install production dependencies
 COPY package.json package-lock.json ./
@@ -16,6 +16,7 @@ ENV PORT=3210
 
 # Expose default port (informational)
 EXPOSE 3210
+EXPOSE 3211
 
 # Start the server using the project script
 CMD ["npm", "run", "start"]
