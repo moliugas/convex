@@ -107,36 +107,44 @@ else
   run_dokku postgres:link "${DB}" "${APP}"
 fi
 
-DEPLOY_SUCCEEDED=false
-if git remote | grep -q "^dokku$"; then
-  # Ensure the dokku remote points at the selected app name
-  EXISTING_URL=$(git remote get-url dokku 2>/dev/null || true)
-  if [[ -n "${EXISTING_URL}" ]]; then
-    REMOTE_APP=""
-    NEW_URL=""
-    if [[ ${EXISTING_URL} =~ ^ssh:// ]]; then
-      # ssh://dokku@host[:port]/app or ssh://dokku@host/app
-      REMOTE_APP=${EXISTING_URL##*/}
-      PREFIX=${EXISTING_URL%/*}
-      NEW_URL="${PREFIX}/${APP}"
-    else
-      # scp-like syntax dokku@host:app
-      REMOTE_APP=${EXISTING_URL#*:}
-      HOSTSPEC=${EXISTING_URL%%:*}
-      NEW_URL="${HOSTSPEC}:${APP}"
-    fi
-    if [[ -n "${REMOTE_APP}" && "${REMOTE_APP}" != "${APP}" ]]; then
-      echo "Updating 'dokku' git remote to point to app '${APP}' (was '${REMOTE_APP}')."
-      git remote set-url dokku "${NEW_URL}"
-    fi
+# Ensure DATABASE_URL is set from the postgres service DSN (trim DB name)
+echo "Ensuring DATABASE_URL is set once with base DSN..."
+# Try to read DSN directly from the service; fall back to current config if unavailable
+DB_DSN=""
+if run_dokku postgres:info "${DB}" --dsn >/dev/null 2>&1; then
+  DB_DSN=$(run_dokku postgres:info "${DB}" --dsn | tr -d '\r' | tail -n1)
+else
+  # Fallback: attempt to parse from serialized info
+  DB_DSN=$(run_dokku postgres:info "${DB}" --serialized 2>/dev/null | awk -F': ' '/DSN/ {print $2}' | tr -d '\r' | tail -n1 || true)
+fi
+
+if [[ -z "${DB_DSN}" ]]; then
+  echo "Warning: Could not determine DSN from service ${DB}. Leaving existing DATABASE_URL as-is."
+else
+  # Trim the trailing "/<db_name>" part from DSN (e.g., "/conapi_db") to keep only scheme://user:pass@host:port
+  # Prefer robust trim by capturing scheme+authority; fallback to removing last path segment.
+  DB_BASE_DSN=$(printf "%s" "${DB_DSN}" | sed -E 's#(postgres(ql)?://[^/]+).*#\1#')
+  if [[ -z "${DB_BASE_DSN}" || "${DB_BASE_DSN}" == "${DB_DSN}" && "${DB_DSN}" == *"/"* ]]; then
+    # Fallback: drop everything after the final slash
+    DB_BASE_DSN="${DB_DSN%/*}"
   fi
-  echo "Pushing to Dokku (branch: master)..."
-  git push dokku master
+
+  CURRENT_DB_URL=$(run_dokku config:get "${APP}" DATABASE_URL || true)
+  if [[ "${CURRENT_DB_URL}" == "${DB_BASE_DSN}" ]]; then
+    echo "DATABASE_URL already set to trimmed base; skipping."
+  else
+    echo "Saving trimmed base DATABASE_URL to app config..."
+    run_dokku config:set "${APP}" DATABASE_URL="${DB_BASE_DSN}"
+  fi
+fi
+
+DEPLOY_SUCCEEDED=false
+echo "Deploying using image via dokku git:from-image..."
+# Use the specified image reference; deploy to the selected app name
+if run_dokku git:from-image "${APP}" ghcr.io/get-convex/convex-backend:08139ef318b1898dad7731910f49ba631631c902; then
   DEPLOY_SUCCEEDED=true
 else
-  echo "No 'dokku' git remote configured; skipping git push."
-  echo "Add one with: git remote add dokku dokku@<host>:${APP}"
-  echo "Or deploy using Dokku commands like 'dokku git:sync ${APP} <repo> <branch>' if available."
+  echo "dokku git:from-image failed. Check Dokku logs for details."
 fi
 
 if [ "${DEPLOY_SUCCEEDED}" = true ]; then

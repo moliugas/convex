@@ -1,4 +1,4 @@
-FROM ghcr.io/get-convex/convex-backend:08139ef318b1898dad7731910f49ba631631c902
+FROM node:20-alpine
 
 WORKDIR /
 
