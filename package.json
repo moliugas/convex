@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "convex dev --prod --port ${PORT:-3210}",
+    "start": "convex dev --prod ${PORT:-3210}",
     "dev": "convex dev"
   },
   "dependencies": {
