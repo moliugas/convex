@@ -1,12 +1,11 @@
 {
-  "name": "convex-self-hosted",
+  "name": "convex-app",
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "convex dev --prod",
-    "dev": "convex dev"
+    "start": "convex dev --prod 0.0.0.0:3000"
   },
   "dependencies": {
-    "convex": "^1.12.0"
+    "convex": "^1.0.0"
   }
 }
