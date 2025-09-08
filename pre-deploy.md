@@ -17,11 +17,13 @@ dokku postgres:create convex-db
     # Get url
     dokku postgres:info convex-db
 
-# Linking injects DATABASE_URL into the app’s config automatically:
-dokku postgres:link convex-db convex
+# Linking injects DATABASE_URL into the app’s config automatically (DONT)
+# dokku postgres:link convex-db convex
 
     # Check and remove "/convex_db" from end of string
     dokku config convex
+# manually set connection string
+dokku config:set convex POSTGRES_URL='postgres://postgres:d25c69f87df2bfb51fef75abdc5076a4@dokku-postgres-convex-db:5432'
 
 # Set api & actions urls with your domain in dokku
 dokku domains:set convex api.*.* actions.*.*
