@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-# Intercept only pushes to the dokku remote; delegate everything else.
-if [[ "${1:-}" == "push" && "${2:-}" == "dokku" ]]; then
-  echo "[mock-git] Simulating push to remote 'dokku' (branch: ${3:-master})"
-  exit 0
-fi
-exec /usr/bin/git "$@"
