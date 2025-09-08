@@ -1,0 +1,15 @@
+{
+  "scripts": { "dokku": { "predeploy": "" } },
+  "formation": { "web": { "quantity": 1 } },
+  "checks": {
+    "web": [
+      {
+        "type": "tcp",
+        "port": 3210,
+        "attempts": 20,
+        "timeout": 3,
+        "interval": 2
+      }
+    ]
+  }
+}
