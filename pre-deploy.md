@@ -1,7 +1,3 @@
-#!/usr/bin/env bash
-# pre-deploy.sh — Pre-deployment hook for Dokku/Convex
-# Description: Add any checks or build steps to run before deployment.
-# Usage: ./pre-deploy.sh
 
 # Enable strict mode for safer scripts
 set -euo pipefail
@@ -16,6 +12,17 @@ dokku domains:set convex api.*.* actions.*.*
 # Deploy (set url)
 git remote add dokku dokku@YOUR_HOST:convex
 git push dokku main
+
+# Port mapping in dokku
+dokku ports:set convex http:80:3210
+dokku ports:add convex https:443:3210
+
+# Create nginx template for actions endpont port mapping to same container
+    # copy the default template as a starting point
+    sudo mkdir -p /home/dokku/convex
+    sudo cp /var/lib/dokku/plugins/available/nginx-vhosts/templates/nginx.conf.sigil \
+            /home/dokku/convex/nginx.conf.sigil
+    
 
  # Create postgres DB for convex
 dokku plugin:install https://github.com/dokku/dokku-postgres.git postgres
