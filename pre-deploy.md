@@ -107,7 +107,15 @@ server {
   include {{ $.NGINX_SSL_CONFIG }};
   {{ end }}
 }
-######
 
+
+# This lets us use custom sigil with deployment from image (IMPORTANT)
+https://github.com/dewey/dokku-nginx-override-by-app
+
+dokku plugin:install https://github.com/dewey/dokku-nginx-override-by-app.git
+dokku nginx-override-by-app:add convex /home/dokku/convex/nginx.conf.sigil
+
+    # Configs:
+    /var/lib/dokku/data/nginx-override-by-app
 
 
